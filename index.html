@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="redditClone">
+<head>
+   <meta charset="UTF-8">
+   <title>Document</title>
+   <script src="data.js"></script>
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+   <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
+   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="main.css">
+   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.js"></script>
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
+   <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.js"></script>
+   <script src="app.js"></script>
+</head>
+<body ng-controller="myController">
+
+<!---NAVBAR--->
+   <nav class="navbar navbar-default navbar-fixed-top">
+     <div class="container-fluid">
+       <!-- Brand and toggle get grouped for better mobile display -->
+       <div class="navbar-header">
+         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+           <span class="sr-only">Toggle navigation</span>
+           <span class="icon-bar"></span>
+           <span class="icon-bar"></span>
+           <span class="icon-bar"></span>
+         </button>
+         <a class="navbar-brand cursor" href="#" ng-click="reset()">Reddit Clone</a>
+       </div>
+
+       <!-- Collect the nav links, forms, and other content for toggling -->
+       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+         <ul class="nav navbar-nav">
+           <li><a href="#" ng-click="view.createpost = !view.createpost">Create A Post</a></li>
+           <li class="dropdown">
+             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Sort {{sort_by}} <span class="caret"></span></a>
+             <ul class="dropdown-menu" ng-model="sort_by" ng-init="sort_by='votes'; orderBy=true">
+               <li ng-click="sort_by='votes'; orderBy=true"><a>Votes</a></li>
+               <li ng-click="sort_by='date'; orderBy=true"><a>Date</a></li>
+               <li ng-click="sort_by='title'; orderBy=false"><a>Title</a></li>
+             </ul>
+           </li>
+         </ul>
+         <form class="navbar-form navbar-left">
+           <div class="form-group">
+             <input type="text" class="form-control search" placeholder="Search" ng-model="searchText">
+           </div>
+         </form>
+       </div><!-- /.navbar-collapse -->
+     </div><!-- /.container-fluid -->
+   </nav>
+
+<!-- Add Post Form-->
+<div class="container">
+   <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+         <form ng-submit="submitForm(postForm)" ng-show="view.createpost" name="postForm" class="postForm">
+            <div class="form-group" ng-class="{'has-error': postForm.title.$invalid && postForm.title.$dirty, 'has-success': postForm.title.$valid && postForm.title.$dirty}">
+               <label for="title">Title</label>
+               <input type="text"
+                     name="title"
+                     class="form-control"
+                     ng-maxlength= 100
+                     ng-model="myForm.title"
+                     placeholder="My First Post"
+                     required>
+               <p ng-show="postForm.title.$invalid && postForm.title.$dirty" class="red">Please Put a Title</p>
+            </div>
+            <div class="form-group" ng-class="{'has-error': postForm.author.$invalid && postForm.author.$dirty, 'has-success': postForm.author.$valid && postForm.author.$dirty}">
+               <label for="author">Author</label>
+               <input type="text"
+                     name='author'
+                     class="form-control"
+                     ng-maxlength = 100
+                     ng-model="myForm.author"
+                     placeholder="Erik Mura"
+                     required>
+               <p ng-show="postForm.author.$invalid && postForm.author.$dirty" class="red">Please Put Your Name</p>
+            </div>
+            <div class="form-group" ng-class="{'has-error': postForm.imageurl.$invalid && postForm.imageurl.$dirty, 'has-success': postForm.imageurl.$valid && postForm.imageurl.$dirty}">
+               <label for="imageurl">ImageURL</label>
+               <input type="url"
+                     name="imageurl"
+                     class="form-control"
+                     ng-model="myForm.imageurl"
+                      placeholder="http://www.w3schools.com/css/img_fjords.jpg"
+                     required>
+               <p ng-show="postForm.imageurl.$invalid && postForm.imageurl.$dirty" class="red">Please Put a Valid URL</p>
+            </div>
+            <div class="form-group" ng-class="{'has-error': postForm.description.$invalid && postForm.description.$dirty, 'has-success': postForm.description.$valid && postForm.description.$dirty}">
+               <label for="description">Description</label>
+               <textarea type="text"
+                        name="description"
+                        class="form-control"
+                        ng-model="myForm.description"
+                        ng-maxlength = 400
+                        placeholder="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque finibus tincidunt volutpat. Morbi congue sem sagittis, sagittis felis eu, semper arcu. Nullam ut egestas sapien. Morbi efficitur orci odio, quis consequat felis ullamcorper nec."
+                        rows="6"
+                        required></textarea>
+               <p>Character Count: {{myForm.description.length}}</p>
+               <p ng-show="postForm.description.$invalid && postForm.description.$dirty" class="red">Discription must be less than 400 characters</p>
+            </div>
+            <input type="submit" name="submit" value="Submit" class="btn btn-default" ng-disabled="postForm.$invalid">
+         </form>
+      </div>
+   </div>
+</div>
+
+<div class="container">
+   <div class="row">
+      <div class="col-md-10 col-md-offset-1 posts" ng-repeat="post in view.posts | filter: searchText | orderBy: sort_by: orderBy">
+         <div class="col-md-3 postimage">
+            <img src="{{post.imageurl}}">
+         </div>
+         <div class="col-md-9 text">
+            <div class="row">
+               <span class="title">{{post.title}}</span>
+               <a class="up cursor"><span ng-click="post.votes = post.votes + 1"> <i class="fa fa-arrow-up fa-2x"  aria-hidden="true"></i></span></a>
+               <a class="down cursor"><span ng-click="post.votes = post.votes - 1"> <i class="fa fa-arrow-down fa-2x" aria-hidden="true"></i></span></a>
+               <span ng-class="{green: post.votes > 0, red: post.votes < 0}" class="postNum">{{post.votes}} </span>
+            </div>
+            <div class="row">
+               <span class="author">by: {{post.author}}</span>
+            </div>
+            <div class="row">
+               <span class="description">{{post.description}}</span>
+            </div>
+            <div class="row info">
+               <i class="fa fa-calendar" aria-hidden="true"></i> {{post.date | amCalendar}}  |  <span>
+                     <a ng-click="toggleForm(post)" class='cursor'>
+                        <i class="fa fa-pencil" aria-hidden="true"></i> Add Comment</a></span>    |
+                        <span><a ng-click="toggleComment(post)" class="cursor"><i class="fa fa-comment" aria-hidden="true"></i> <ng-pluralize count="post.comments.length" when="{'1': '{} Comment', 'other':'{} Comments'}"> </ng-pluralize> </a></span>
+            </div>
+            <div class="row">
+               <form ng-submit="addComment(commentForm,post)" ng-show="post.addcomment"  name="commentForm" novalidate>
+                  <div class="form-group">
+                     <label for="author">Author</label>
+                     <input type="text"
+                      class="form-control"
+                      ng-model="commentForm.author"
+                      required>
+                  </div>
+                  <div class="form-group">
+                     <label for="text">Comment</label>
+                     <input type="text"
+                      class="form-control"
+                      ng-model="commentForm.text"
+                      required>
+                  </div>
+                <input type="submit">
+               </form>
+            </div>
+            <div class="row comment" ng-show="post.showcomments" name="comments" ng-repeat="comment in post.comments">
+               <b>{{comment.author}}</b> ({{comment.date | date:'EEEE, MMMM d, yyyy'}}) - {{comment.text}}
+            </div>
+        </div>
+      </div>
+   </div>
+</div>
+
+
+</body>
+</html>
